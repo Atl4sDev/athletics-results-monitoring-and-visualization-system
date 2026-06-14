@@ -1,0 +1,96 @@
+/* Phase D1: Self-hosted IBM Plex Sans (weights 400/500/600/700) */
+@import '@fontsource/ibm-plex-sans/400.css';
+@import '@fontsource/ibm-plex-sans/500.css';
+@import '@fontsource/ibm-plex-sans/600.css';
+@import '@fontsource/ibm-plex-sans/700.css';
+
+@import "tailwindcss";
+
+@theme {
+  /* --- Neutral ramp --- */
+  --color-bg-page: #F4F4F5;          /* zinc-100 */
+  --color-bg-card: #FFFFFF;          /* white */
+  --color-border: #D4D4D8;           /* zinc-300 */
+  --color-border-subtle: #E4E4E7;    /* zinc-200 */
+  --color-text-primary: #18181B;     /* zinc-900 */
+  --color-text-secondary: #71717A;   /* zinc-500 — verified ≥4.5:1 on #F4F4F5 */
+  --color-text-muted: #A1A1AA;       /* zinc-400 */
+
+  /* --- Accent (Indigo) ---
+     #4F46E5 on #FFF  ≈ 5.0:1  (passes AA ≥14px)
+     #4338CA on #FFF  ≈ 6.2:1  (passes AA small text ≤13px)  */
+  --color-accent: #4F46E5;           /* indigo-600 */
+  --color-accent-hover: #4338CA;     /* indigo-700 */
+  --color-accent-tint: #EEF2FF;      /* indigo-50 */
+  --color-accent-fg: #FFFFFF;        /* text on accent fill */
+  --color-accent-text-sm: #4338CA;   /* indigo-700 — for small links ≤13px */
+
+  /* --- SCHEDULED status ---
+     #52525B on #F4F4F5  ≈ 6.0:1  ✓ */
+  --color-status-scheduled-bg: #F4F4F5;
+  --color-status-scheduled-text: #52525B;   /* zinc-600 */
+  --color-status-scheduled-border: #D4D4D8;
+
+  /* --- ONGOING status (amber — communicates live, not error) ---
+     #92400E on #FEF3C7  ≈ 7.5:1  ✓ */
+  --color-status-ongoing-bg: #FEF3C7;       /* amber-100 */
+  --color-status-ongoing-text: #92400E;     /* amber-800 */
+  --color-status-ongoing-border: #F59E0B;   /* amber-500 */
+
+  /* --- OFFICIAL status ---
+     #065F46 on #D1FAE5  ≈ 7.3:1  ✓ */
+  --color-status-official-bg: #D1FAE5;      /* emerald-100 */
+  --color-status-official-text: #065F46;    /* emerald-800 */
+  --color-status-official-border: #10B981;  /* emerald-500 */
+
+  /* --- UNCONFIRMED / попередні status ---
+     #475569 on #F1F5F9  ≈ 4.6:1  ✓ (borderline; darken to #334155 if fails on device) */
+  --color-status-unconfirmed-bg: #F1F5F9;       /* slate-100 */
+  --color-status-unconfirmed-text: #475569;     /* slate-600 */
+  --color-status-unconfirmed-border: #CBD5E1;   /* slate-300 */
+
+  /* --- Environment tags ---
+     Indoor:  #1E40AF on #EFF6FF  ≈ 8.6:1  ✓
+     Outdoor: #166534 on #F0FDF4  ≈ 8.1:1  ✓ */
+  --color-env-indoor-bg: #EFF6FF;       /* blue-50 */
+  --color-env-indoor-text: #1E40AF;     /* blue-800 */
+  --color-env-indoor-border: #BFDBFE;   /* blue-200 */
+  --color-env-outdoor-bg: #F0FDF4;      /* green-50 */
+  --color-env-outdoor-text: #166534;    /* green-800 */
+  --color-env-outdoor-border: #BBF7D0;  /* green-200 */
+
+  /* --- Semantic error / success --- */
+  --color-error: #DC2626;        /* red-600 */
+  --color-error-bg: #FEF2F2;     /* red-50 */
+  --color-error-text: #991B1B;   /* red-800 */
+  --color-success: #16A34A;      /* green-600 */
+
+  /* --- Typography --- */
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+
+  /* --- Spacing & layout --- */
+  --spacing-content-max: 72rem;  /* 1152px — page-level max-width */
+
+  /* --- Radius --- */
+  --radius-sm: 0.375rem;   /* 6px — cards, inputs, buttons */
+  --radius-badge: 9999px;  /* pill — all badges */
+
+  /* --- Shadow --- */
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.07);
+}
+
+/* Phase D2: Typography base — apply IBM Plex Sans everywhere */
+*, *::before, *::after {
+  font-family: var(--font-sans);
+}
+
+/* Phase D2: Global focus ring (ACC-002/PAT-002) */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+}

@@ -1,0 +1,7 @@
+customtkinter==5.2.2
+watchdog==4.0.0
+requests==2.31.0
+pydantic==2.6.3
+python-dotenv==1.2.2
+types-requests==2.33.0.20260513
+pytest==8.2.0

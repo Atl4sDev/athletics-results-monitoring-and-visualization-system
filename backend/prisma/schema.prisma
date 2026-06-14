@@ -1,0 +1,162 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- Enums ---
+
+enum CompetitionStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+}
+
+enum CompetitionEnvironment {
+  INDOOR
+  OUTDOOR
+}
+
+enum DisciplineType {
+  TRACK
+  FIELD
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  MIXED
+}
+
+enum AgeCategory {
+  U14
+  U16
+  U18
+  U20
+  U23
+  SENIOR
+  MASTERS
+}
+
+enum HeatStatus {
+  SCHEDULED
+  UNCONFIRMED
+  OFFICIAL
+}
+
+enum ResultStatus {
+  PENDING
+  OK
+  DNS
+  DNF
+  DQ
+  FS
+}
+
+// --- Models ---
+
+model Competition {
+  id          String                 @id @default(uuid())
+  name        String
+  dateStart   DateTime
+  dateEnd     DateTime
+  location    String
+  status      CompetitionStatus
+  environment CompetitionEnvironment @default(OUTDOOR)
+  documents   Json?
+  syncToken   String                 @unique // Auth token used by the Python sync agent
+  events      Event[]
+
+  @@index([status, dateStart])
+  @@index([environment])
+}
+
+model Discipline {
+  id         Int            @id @default(autoincrement())
+  code       String         @unique // Standardised code, e.g. "100", "400H"
+  name       String
+  type       DisciplineType
+  isStandard Boolean
+  events     Event[]
+}
+
+model Event {
+  id            String      @id @default(uuid())
+  competitionId String
+  competition   Competition @relation(fields: [competitionId], references: [id])
+
+  disciplineId Int? // NULL when the discipline code is not in the reference table
+  discipline   Discipline? @relation(fields: [disciplineId], references: [id])
+
+  customName    String? // LynxPad event name stored verbatim when disciplineId is NULL
+  scheduledTime DateTime?
+  roundName     String
+  gender        Gender
+  lynxEventId   Int
+  lynxRoundId   Int
+  ageCategory   AgeCategory
+  eventType     DisciplineType
+  heats         Heat[]
+
+  @@unique([competitionId, lynxEventId, lynxRoundId])
+  @@index([disciplineId, gender, ageCategory])
+}
+
+model Heat {
+  id          String     @id @default(uuid())
+  eventId     String
+  event       Event      @relation(fields: [eventId], references: [id])
+  status      HeatStatus
+  lynxHeatId  Int
+  wind        Float?
+  confirmedAt DateTime?
+  results     Result[]
+
+  @@unique([eventId, lynxHeatId])
+  @@index([status])
+}
+
+model Athlete {
+  id            String    @id @default(uuid())
+  firstName     String
+  lastName      String
+  gender        Gender
+  birthDate     DateTime?
+  licenseNumber String    @unique
+  results       Result[]
+}
+
+model Result {
+  id        String       @id @default(uuid())
+  heatId    String
+  heat      Heat         @relation(fields: [heatId], references: [id])
+  athleteId String
+  athlete   Athlete      @relation(fields: [athleteId], references: [id])
+  lane      Int
+  bibNumber String
+  team      String
+  status    ResultStatus @default(PENDING)
+  place     Int?
+  mark      String?
+  sortValue Float? // Normalised seconds value used for sorting and ranking
+  reacTime  Float? // Reaction time in seconds, as recorded by the timing system
+  isPB      Boolean      @default(false)
+  isSB      Boolean      @default(false)
+
+  @@unique([heatId, athleteId])
+  @@index([athleteId, sortValue])
+  @@index([status, sortValue])
+  @@index([isPB])
+  @@index([isSB])
+}
+
+model Admin {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+}

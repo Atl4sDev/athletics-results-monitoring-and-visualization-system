@@ -1,0 +1,39 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+.env/
+
+# Local databases
+*.db
+*.sqlite3
+buffer.db
+
+# Rotating logs directory
+logs/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# Testing
+.pytest_cache/
+
+# Lynx timing system output files
+lynx.cmp
+lynx.ppl
+lynx.evt
+lynx.sch
+lynx.lif
+*.cmp.txt
+test_data/
+
+.vscode/

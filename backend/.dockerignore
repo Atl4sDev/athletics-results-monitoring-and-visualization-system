@@ -1,0 +1,23 @@
+node_modules
+dist
+.env*
+npm-debug.log*
+
+# tests
+src/tests
+vitest.config.ts
+coverage
+
+# docs / planning
+docs
+plan
+*.md
+STRUCTURE.md
+ARCHITECTURE.md
+API_CONTRACT.md
+CLAUDE.md
+
+# claude / IDE
+.claude
+.vscode
+Backend1_Project_Architecture_Blueprint.md

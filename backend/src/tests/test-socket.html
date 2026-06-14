@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Тест WebSocket (Socket.io)</title>
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f4f4f9;
+        }
+
+        .log-box {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .status {
+            font-weight: bold;
+            color: #ff9800;
+        }
+
+        .success {
+            color: #4caf50;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Тестування WebSockets</h1>
+    <p>Статус підключення: <span id="status" class="status">Очікування...</span></p>
+
+    <h3>Журнал подій:</h3>
+    <div class="log-box" id="log"></div>
+
+    <script>
+        // 1. Підключаємося до нашого бекенду
+        const socket = io('http://localhost:3000');
+        const logBox = document.getElementById('log');
+        const statusText = document.getElementById('status');
+
+        // З seed.ts ми знаємо, що тестове змагання має цей конкретний ID
+        const COMPETITION_ID = 'test-comp-uuid-0001-0000-000000000001';
+
+        function logMessage(msg) {
+            const time = new Date().toLocaleTimeString();
+            logBox.innerHTML += `[${time}] ${msg}<br><br>`;
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        // 2. Обробка підключення
+        socket.on('connect', () => {
+            statusText.innerText = 'Підключено!';
+            statusText.className = 'status success';
+            logMessage('Підключено до сервера. Мій ID: ' + socket.id);
+
+            // Відразу просимо сервер додати нас у кімнату тестового змагання
+            socket.emit('join_competition', COMPETITION_ID);
+            logMessage(`Надіслано запит на вхід у кімнату турніру: comp_${COMPETITION_ID}`);
+        });
+
+        // 3. Слухаємо подію оновлення РОЗКЛАДУ (Етап 2)
+        socket.on('schedule_changed', (data) => {
+            logMessage(`<span style="color:#ffcc00">ОТРИМАНО: schedule_changed</span>\n${JSON.stringify(data, null, 2)}`);
+        });
+
+        // 4. Слухаємо подію оновлення РЕЗУЛЬТАТІВ (Етап 3)
+        socket.on('live_results', (data) => {
+            logMessage(`<span style="color:#00e5ff">ОТРИМАНО: live_results (Забіг оновлено)</span>\n${JSON.stringify(data, null, 2)}`);
+        });
+
+        socket.on('disconnect', () => {
+            statusText.innerText = 'Відключено';
+            statusText.style.color = 'red';
+            logMessage('Втрачено з\'єднання із сервером.');
+        });
+    </script>
+</body>
+
+</html>

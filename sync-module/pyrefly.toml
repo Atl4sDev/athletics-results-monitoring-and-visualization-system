@@ -1,0 +1,8 @@
+project-includes = [
+    "**/*.py*",
+    "**/*.ipynb",
+]
+
+site_package_path = [".venv/Lib"]
+
+search_path = ["app", "app/sync-module"]
